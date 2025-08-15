@@ -35,10 +35,12 @@ export interface Info {
 }
 
 export interface ProductType {
-  imgPath?: string | StaticImageData | any;
+  imgPath: string | StaticImageData ;
   name?: string;
   price?: number;
 }
+
+type ProductCategory = 'emAlta' | 'roupas' | 'acessorios' | 'calcados' | 'promocoes';
 
 export const navmessages: NavMessage[] = [
   {text: <><span><strong className="navmessage">Compre Agora!!!</strong></span></>},
@@ -55,7 +57,7 @@ export const headInfo: Info[] = [
   {id: 5, name: "Promoções", links: ["descontos", "ofertas relâmpago"] },
 ]
 
-export const products: Record<string, ProductType[]> = {
+export const products: Record<ProductCategory, ProductType[]> = {
   emAlta: [
     { imgPath: bone1, name: 'CAMISETA BÁSICA COOL STREET ART', price: 149.90 },
     { imgPath: pulseira1, name: 'CALÇA CARGO VERDE', price: 239.90 },
