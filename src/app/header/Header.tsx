@@ -1,8 +1,7 @@
 "use client";
 import Image from 'next/image';
 import gsap from 'gsap';
-import { logoImg, heroimages } from "@/assets";
-import { Search, Heart, ShoppingBag, User, Menu  } from "lucide-react"
+import { heroimages } from "@/assets";
 import { useState, useRef, useEffect } from 'react';
 import { headInfo } from "@/app/components/index";
 

@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-
+import { StaticImageData } from "next/image";
 import tshirt1 from '../../assets/tshirt-1.jpg';
 import tshirt2 from '../../assets/tshirt-2.jpg';
 import tshirt3 from '../../assets/tshirt-3.jpg';
@@ -35,7 +35,7 @@ export interface Info {
 }
 
 export interface ProductType {
-  imgPath?: any;
+  imgPath?: string | StaticImageData | any;
   name?: string;
   price?: number;
 }
