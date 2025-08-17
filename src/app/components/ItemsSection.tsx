@@ -25,6 +25,7 @@ interface ProdutosTipos{
 const ItemsSection = ({label, category}: ItemsSectionProps) => {
   const [produtos, setProdutos] = useState<ProdutosTipos[]>([])
   const produtoscolecaoRef = collection(db, "products")
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const getProdutos = async () => {
@@ -83,6 +84,15 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
     return () => ctx.revert()
   }, [])
 
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const amount = 1000;
+    scrollRef.current.scrollBy({
+      left: direction === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
+
   return (
     <article
       ref={sectionRef}
@@ -110,11 +120,16 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
         </div>
       </section>
       <section>
+        {/* move to right and left */}
         <section className='hidden lg:flex justify-end w-full h-20'>
-          <div className='h-full w-40 bg-amber-50'>
+          <div className='flex justify-between items-center p-6 h-full w-40 bg-amber-500'>
+            <button onClick={() => scroll("left")}>{'<'}</button>
+            <button onClick={() => scroll("right")}>{'>'}</button>
           </div>
         </section>
-        <section className='flex items-center w-full overflow-auto scrollbar-custom backdrop-blur-sm h-140'>
+        <section 
+        ref={scrollRef}
+        className='flex items-center w-full overflow-auto scrollbar-custom backdrop-blur-sm h-140'>
           <div>
             <section className='w-[2000px] grid grid-cols-20 gap-90 px-10'>
               {produtos.map((item) => (
