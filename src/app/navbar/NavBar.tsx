@@ -58,11 +58,13 @@ const NavBar = () => {
           <Menu />
         </button>
         <div className="absolute left-1/2 transform -translate-x-1/2">
-          <Image
-            className="h-10 w-30"
-            src={logoImg.imgPath}
-            alt="Logo"
-          />
+          <Link href="/">
+            <Image
+              className="h-10 w-30"
+              src={logoImg.imgPath}
+              alt="Logo"
+            />
+          </Link>
         </div>
       </div>
       
