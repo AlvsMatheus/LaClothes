@@ -1,15 +1,12 @@
-'use client'
 import ItemsSection from '../components/ItemsSection'
-
 
 const Hero = () => {
   return (
-    <section className='flex flex-col gap-10 bg-[url(/hero-background.jpg)] '>
-      <ItemsSection category="emAlta" label='Em Alta' />
-      <ItemsSection category="roupas" label='Roupas' />
-      <ItemsSection category="acessorios" label='Acessórios' />
-      <ItemsSection category="calcados" label='Calçados' />
-      <ItemsSection category="promocoes" label='Promoçoes' />
+    <section className='flex flex-col gap-10 bg-[url(/hero-background.jpg)]'>
+      <ItemsSection label="Em alta" category="em-alta" />
+      <ItemsSection label="Roupas" category="roupas" />
+      <ItemsSection label="Calçados" category="calcados" />
+      <ItemsSection label="Acessórios" category="acessorios" />
     </section>
   )
 }

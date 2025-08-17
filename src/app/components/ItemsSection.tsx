@@ -1,19 +1,59 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { products, ProductType } from '.'
+import { db } from '../config/config-firebase'
+import { getDocs, collection } from 'firebase/firestore'
 gsap.registerPlugin(ScrollTrigger)
 
 interface ItemsSectionProps {
   label: string;
-  category: keyof typeof products;
+  category: string;
 }
 
-const ItemsSection = ({ label, category }: ItemsSectionProps) => {
+interface ProdutosTipos{
+  id: string;
+  nome: string;
+  price: number;
+  stock: number;
+  imgPath: string;
+  category: string;
+  emAlta?: boolean;
+}
+
+const ItemsSection = ({label, category}: ItemsSectionProps) => {
+  const [produtos, setProdutos] = useState<ProdutosTipos[]>([])
+  const produtoscolecaoRef = collection(db, "products")
+
+  useEffect(() => {
+    const getProdutos = async () => {
+    // read the data
+    // set the "produtos"
+    try{
+    const data = await getDocs(produtoscolecaoRef)
+    const filteredData: ProdutosTipos[] = data.docs.map((doc) => ({
+      ...doc.data() as ProdutosTipos,
+       id: doc.id
+      }));
+
+      if (category === 'em-alta') {
+        setProdutos(filteredData.filter(item => item.emAlta === true))
+      } else {
+        const produtosFiltrados = filteredData.filter(item => item.category === category)
+        setProdutos(produtosFiltrados)
+      }
+    } catch(err) {
+      console.error(err)
+    }
+  }
+  getProdutos();
+  }, [category])
+
+  
+
   const sectionRef = useRef<HTMLDivElement>(null)
-  const productList: ProductType[] = products[category]
+
 
   useEffect(() => {
     const element = sectionRef.current
@@ -77,10 +117,10 @@ const ItemsSection = ({ label, category }: ItemsSectionProps) => {
         <section className='flex items-center w-full overflow-auto scrollbar-custom backdrop-blur-sm h-140'>
           <div>
             <section className='w-[2000px] grid grid-cols-20 gap-90 px-10'>
-              {productList.map((product, index) => (
+              {produtos.map((item) => (
                 <a 
                 href="#"
-                key={index}
+                key={item.id}
                 >
 
                   <div
@@ -90,16 +130,16 @@ const ItemsSection = ({ label, category }: ItemsSectionProps) => {
                     transition-transform duration-300 hover:scale-105 hover:shadow-indigo-700/70 hover:shadow-lg'
                   >
                    <Image
-                    src={product.imgPath}
-                    alt={product.name || 'Produto'}
+                    src={item.imgPath}
+                    alt={item.nome}
                     width={300}
                     height={360}
                     className='w-full h-[85%] object-cover'
                   />
                     <div className='flex flex-col w-full ps-2 items-start'>
-                      <p className='text-sm font-extralight'>{product.name}</p>
+                      <p className='text-sm font-extralight'>{item.nome}</p>
                       <span className='font-extralight text-black'>
-                        R$ <strong className='font-bold'>{product.price}</strong>
+                        R$ <strong className='font-bold'>{item.price}</strong>
                         </span>
                     </div>
                   </div>

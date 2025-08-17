@@ -62,7 +62,7 @@ const Sign = () => {
 }, []);
   return (
     <header ref={containerRef}>
-      <div className="flex justify-center items-center h-screen w-full bg-[url('/hero-background.jpg')]  bg-top lg:bg-center xl:bg-top">
+      <div className="flex justify-center items-center h-screen md:h-[200dvh] lg:h-screen w-full bg-[url('/hero-background.jpg')]  bg-top lg:bg-center xl:bg-top">
         <div className="backdrop-blur-md bg-white/10 shadow-lg h-110 w-90 md:w-120 lg:h-125 lg:w-90 rounded-2xl border border-white/40 transition-all duration-500 ease-in-out">
           <div className="grid grid-cols-1 grid-rows-[12%_88%] gap-5 md:gap-2  lg:gap-8 h-full w-full p-5 md:p-2 lg:p-10 rounded-2xl">
             <div className="flex justify-center">
