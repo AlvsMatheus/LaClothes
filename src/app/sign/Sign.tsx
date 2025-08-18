@@ -4,6 +4,8 @@ import gsap from "gsap";
 import { auth, googleProvider } from "../config/config-firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup  } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { logoGoogle } from "@/assets";
+import Image from "next/image";
 
 const Sign = () => {
   const router = useRouter();
@@ -108,7 +110,7 @@ const Sign = () => {
                     </a>
                   </div>
                 </div>
-                <div className="flex items-center justify-center flex-col">
+                <div className="flex items-center justify-center flex-col gap-2">
                   <div className={`group bg-gradient-to-bl  hover:bg-gradient-to-r from-black/30 to-blue-400 w-20 text-center p-2 rounded-3xl my-0 lg:my-6 form-element hover:bg-blue-400 hover:cursor-pointer  ${isAnimationComplete ? 'transition-all duration-500 ease-in-out' : ''}`}>
                     <button
                     onClick={signIn}
@@ -120,8 +122,14 @@ const Sign = () => {
                       <div className="form-element">
                         <button
                         onClick={signInGoogle}
-                        className="text-white font-roboto font-bold group-hover:cursor-pointer group-hover:text-blue-200 font-roboto ">
-                          Login with Google
+                        className="text-white font-bold group-hover:cursor-pointer group-hover:text-blue-200 font-roboto ">
+                          <Image 
+                          className="cursor-pointer"
+                          src={logoGoogle.imgPath}
+                          alt="Logo Do Google"
+                          width={40} 
+                          height={40}
+                          />
                         </button>
                       </div>
                     )}

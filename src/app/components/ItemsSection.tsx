@@ -5,6 +5,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { db } from '../config/config-firebase'
 import { getDocs, collection } from 'firebase/firestore'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 gsap.registerPlugin(ScrollTrigger)
 
 interface ItemsSectionProps {
@@ -26,6 +27,7 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
   const [produtos, setProdutos] = useState<ProdutosTipos[]>([])
   const produtoscolecaoRef = collection(db, "products")
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [underline, setUnderline] = useState<boolean>(false)
 
   useEffect(() => {
     const getProdutos = async () => {
@@ -76,11 +78,13 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
             toggleActions: 'play none none none',
             scrub: false,
             markers: false,
+            onEnter: () => {
+                setUnderline(true)
+            }
           }
         }
       )
     }, element)
-
     return () => ctx.revert()
   }, [])
 
@@ -104,7 +108,7 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
             <h1 className='text-[#e8e8e8] font-bold text-5xl'>
               {label}
             </h1>
-            <div className='w-[90%] h-1 bg-[#e8e8e8]' />
+            <div className={`h-1 bg-[#e8e8e8] transition-all ease-in-out duration-1000 ${underline ? 'w-[100%]' : 'w-[0%]'}`} />
           </div>
           <div className='flex w-full'>
             <a
@@ -114,7 +118,9 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
               <h1 className='relative z-10 text-white group-hover:text-black text-[18px] font-extralight leading-5 px-3 py-2 transition-all ease-in-out duration-500'>
                 VER TODOS
               </h1>
-              <div className='absolute top-0 left-0 w-[0%] group-hover:w-[100%] h-full bg-amber-50 transition-all ease-in-out duration-500' />
+              <div 
+              className='absolute top-0 left-0 w-[0%] group-hover:w-[100%]
+               h-full bg-amber-50 transition-all ease-in-out duration-500' />
             </a>
           </div>
         </div>
@@ -122,9 +128,13 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
       <section>
         {/* move to right and left */}
         <section className='hidden lg:flex justify-end w-full h-20'>
-          <div className='flex justify-between items-center p-6 h-full w-40 bg-amber-500'>
-            <button onClick={() => scroll("left")}>{'<'}</button>
-            <button onClick={() => scroll("right")}>{'>'}</button>
+          <div className='flex justify-between items-center p-6 h-full w-40 text-white'>
+            <button
+            className='group hover:cursor-pointer'
+            onClick={() => scroll("left")}><ArrowLeft height={40} width={40} className='group-hover:scale-120 transition-all ease-in-out '/></button>
+            <button
+            className='group hover:cursor-pointer'
+            onClick={() => scroll("right")}><ArrowRight height={40} width={40} className='group-hover:scale-120 transition-all ease-in-out'/></button>
           </div>
         </section>
         <section 
