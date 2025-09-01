@@ -1,17 +1,64 @@
 "use client";
-
+import Link from 'next/link';
 import Image from 'next/image';
+import React, { useEffect, useState, useRef } from 'react';
 import gsap from 'gsap';
+import { navmessages } from '@/app/components/index';
 import { logoImg } from "@/assets";
 import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
-import React, { useEffect, useState, useRef } from 'react';
-import { navmessages } from '@/app/components/index';
-import Link from 'next/link';
+import { db } from '../config/config-firebase';
+import { getDocs, collection} from 'firebase/firestore'
+import firebase from 'firebase/compat/app';
+
+
+interface Produto {
+  id: string
+  nome: string
+  price: number
+  stock: number
+  imgPath: string
+  category: string
+  emAlta?: boolean
+}
+
+
+
 
 const NavBar = () => {
   const [index, setIndex] = useState(0);
   const textRef = useRef<HTMLParagraphElement>(null);
   const [sideMenu, setSideMenu] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>('');
+  const [produtos, setProdutos] = useState<Produto[]>([]);
+  const [filtered, setFiltered] = useState<Produto[]>([]);
+  const query = (search || '').toLowerCase();
+  const produtoscolecaoRef = collection(db, "products")
+
+ useEffect(() => {
+  const getProdutos = async () => {
+    try{
+      const data = await getDocs(produtoscolecaoRef);
+      const allProdutos: Produto[] = data.docs.map((doc) => ({
+        id: doc.id,
+        ...(doc.data() as Omit<Produto, "id">),
+      }));
+      setProdutos(allProdutos);
+    } catch(err) {
+      console.error(err)
+    }
+  }
+  getProdutos();
+ },[])
+
+  useEffect(() => {
+    const q = query.trim();
+    if (!q) { setFiltered([]); return; }
+    
+    setFiltered(
+      produtos.filter((p) => p.nome?.toLowerCase().startsWith(q))
+    );
+    },[query, produtos])
+  
 
   useEffect(() => {
     if (!textRef.current) return;
@@ -71,8 +118,10 @@ const NavBar = () => {
       {/* Desktop */}
       <div className="hidden md:flex flex-col items-center w-full py-4">
         <section className="grid grid-cols-3 justify-items-center items-center w-[85%]">
-          <span className="flex justify-between items-center w-80 bg-stone-300/30 shadow-sm rounded-4xl p-3">
+          <span className="flex relative justify-between items-center w-80 bg-stone-300/30 shadow-sm rounded-4xl p-3">
             <input
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
+              value={search}
               className="ps-3 focus:outline-none placeholder:text-black/80 placeholder:font-semibold text-sm"
               type="text"
               placeholder="Procurar Por"
@@ -80,6 +129,26 @@ const NavBar = () => {
             <button>
               <Search />
             </button>
+            {
+              search && filtered.length > 0 && (
+              <section className='absolute  p-2 bg-[#e8e8e8] top-13 left-0 rounded-b-3xl'>
+                {filtered.map((item) => (
+                  <Link 
+                  key={item.id}
+                  href={`/buy/${item.id}`}> 
+                  <section className='flex items-center justify-start overflow-hidden gap-10 ps-4 h-10 w-full'>
+                    <Image 
+                    src={item.imgPath} 
+                    alt={item.nome}
+                    height={10} 
+                    width={50}/>
+                    <p className='text-sm text-nowrap'>{item.nome}</p>
+                  </section>
+                  </Link>
+                ))}
+              </section>
+              )
+            }
           </span>
           <Link href="/">
             <Image

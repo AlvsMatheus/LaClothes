@@ -5,18 +5,16 @@ import { logoGithub, logoLinkedin } from '@/assets'
 const Footer = () => {
   return (
     <article className='flex flex-col gap-5 md:gap-20 w-full h-100 bg-[#0e0e0e]'> 
-        <section className='h-50 md:h-full px-5 py-2 md:px-0 md:py-0 grid-cols-1 md:grid md:grid-cols-2 md:items-center md:justify-items-center '>
-            <ul className='text-white'>
-                <li>lorem</li>
-                <li>lorem</li>
-                <li>lorem</li>
-                <li>lorem</li>
+        <section className='h-50 md:h-full px-5 py-2 md:px-0 md:py-0 grid grid-cols-[1fr_1fr] items-center md:grid md:grid-cols-2 md:items-center md:justify-items-center '>
+            <ul className='flex flex-col justify-center items-center gap-2 text-white'>
+                <li>Meu perfil</li>
+                <li>Meu carrinho</li>
+                <li>Produtos</li>
             </ul>
-            <ul className='text-white'>
-                <li>lorem</li>
-                <li>lorem</li>
-                <li>lorem</li>
-                <li>lorem</li>
+            <ul className='flex flex-col justify-center items-center gap-2 text-white'>
+                <li>Sobre Nós</li>
+                <li>Contate-nos</li>
+                <li className='md:text-center'>{':)'}</li>
             </ul>
         </section>
         <section className='w-full grid gap-2 md:gap-0 md:grid-cols-[1fr_1fr] justify-items-center p-5 text-white'>

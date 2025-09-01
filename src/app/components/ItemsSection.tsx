@@ -6,6 +6,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { db } from '../config/config-firebase'
 import { getDocs, collection } from 'firebase/firestore'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
 gsap.registerPlugin(ScrollTrigger)
 
 interface ItemsSectionProps {
@@ -143,8 +144,8 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
           <div>
             <section className='w-[2000px] grid grid-cols-20 gap-90 px-10'>
               {produtos.map((item) => (
-                <a 
-                href="#"
+                <Link
+                href={`/buy/${item.id}`}
                 key={item.id}
                 >
 
@@ -168,7 +169,7 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
                         </span>
                     </div>
                   </div>
-                </a>
+                </Link>
               ))}
             </section>
           </div>
