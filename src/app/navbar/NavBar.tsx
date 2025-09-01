@@ -8,8 +8,6 @@ import { logoImg } from "@/assets";
 import { Search, Heart, ShoppingBag, User, Menu } from "lucide-react";
 import { db } from '../config/config-firebase';
 import { getDocs, collection} from 'firebase/firestore'
-import firebase from 'firebase/compat/app';
-
 
 interface Produto {
   id: string
@@ -48,7 +46,7 @@ const NavBar = () => {
     }
   }
   getProdutos();
- },[])
+ },[produtoscolecaoRef])
 
   useEffect(() => {
     const q = query.trim();
