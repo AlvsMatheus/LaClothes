@@ -132,6 +132,7 @@ const NavBar = () => {
               <section className='absolute  p-2 bg-[#e8e8e8] top-13 left-0 rounded-b-3xl'>
                 {filtered.map((item) => (
                   <Link 
+                  onClick={() => setSearch('')}
                   key={item.id}
                   href={`/buy/${item.id}`}> 
                   <section className='flex items-center justify-start overflow-hidden gap-10 ps-4 h-10 w-full'>

@@ -83,38 +83,41 @@ body {
   background-color: rgba(255, 255, 255, 0.6);
 }
 
-.card {
+.card-container {
+  border-radius: 1.3rem;
+  background: #fff;
   position: relative;
-}
-
-.cardimg {
-  width: 25rem;
-  height: 25rem;
-  border-radius: 1.25rem;
-  border: 0.5rem solid var(--card-border-color);
-  overflow: hidden;
-  position: relative;
-}
-
-.tag {
-  width: 12.5rem;
-  height: 3.75rem;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  right: 0;
-  top: 0;
-  background: var(--card-bg-color);
-  border-bottom: 0.5rem solid var(--card-border-color);
-  border-left: 0.5rem solid var(--card-border-color);
-  border-radius: 0 0 0 1rem;
-}
-
-.tag::after, .tag::before {
-  width: 1.125rem;
-  height: 1.125rem;
-  content:'';
-  position: absolute;
+    
 }
 
 
+
+.card-back-button{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    content: '';
+    height: 4rem;
+    background-color: rgb(0, 0, 0);
+    width: 20%;
+    top: 0;
+    right: 0;
+    border-bottom-left-radius: 1.3rem;
+  }
+.card-back-button::before, .card-back-button::after {
+    position: absolute;
+    content: '';
+    width: 1.3rem;
+    aspect-ratio: 1;
+    background: radial-gradient(circle 1.35rem at bottom left, #fff 98%, #000) top left;
+}
+
+  .card-back-button::before {
+    top: 0;
+    left: -1.29rem;
+}
+
+ .card-back-button::after {
+    right: 0;
+    bottom: -1.30rem;
+ }
