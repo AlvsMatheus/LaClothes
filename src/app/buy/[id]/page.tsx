@@ -4,8 +4,7 @@ import { useParams } from 'next/navigation'
 import Image from 'next/image'
 import { db } from '.././../config/config-firebase'  // ajuste o path se precisar
 import { doc, getDoc } from 'firebase/firestore'
-import Link from 'next/link'
-import { products } from '@/app/components'
+
 
 interface Produto {
   id: string
