@@ -1,4 +1,4 @@
-import ItemsSection from '../components/ItemsSection'
+import ItemsSection from './ItemsSection'
 
 const Hero = () => {
   return (

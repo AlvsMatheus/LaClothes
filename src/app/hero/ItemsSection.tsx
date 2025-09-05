@@ -1,28 +1,15 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
-import Image from 'next/image'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { db } from '../config/config-firebase'
 import { getDocs, collection } from 'firebase/firestore'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import ItemsCard from './ItemsCard'
+import type { ProdutosTipos, ItemsSectionProps } from '../types/index'
 gsap.registerPlugin(ScrollTrigger)
 
-interface ItemsSectionProps {
-  label: string;
-  category: string;
-}
-
-interface ProdutosTipos{
-  id: string;
-  nome: string;
-  price: number;
-  stock: number;
-  imgPath: string;
-  category: string;
-  emAlta?: boolean;
-}
 
 const ItemsSection = ({label, category}: ItemsSectionProps) => {
   const [produtos, setProdutos] = useState<ProdutosTipos[]>([])
@@ -32,8 +19,6 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
 
   useEffect(() => {
     const getProdutos = async () => {
-    // read the data
-    // set the "produtos"
     try{
     const data = await getDocs(produtoscolecaoRef)
     const filteredData: ProdutosTipos[] = data.docs.map((doc) => ({
@@ -132,10 +117,20 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
           <div className='flex justify-between items-center p-6 h-full w-40 text-white'>
             <button
             className='group hover:cursor-pointer'
-            onClick={() => scroll("left")}><ArrowLeft height={40} width={40} className='group-hover:scale-120 transition-all ease-in-out '/></button>
+            onClick={() => scroll("left")}>
+              <ArrowLeft 
+               height={40}
+               width={40}
+               className='group-hover:scale-120 transition-all ease-in-out '/>
+            </button>
             <button
             className='group hover:cursor-pointer'
-            onClick={() => scroll("right")}><ArrowRight height={40} width={40} className='group-hover:scale-120 transition-all ease-in-out'/></button>
+            onClick={() => scroll("right")}>
+              <ArrowRight 
+              height={40} 
+              width={40} 
+              className='group-hover:scale-120 transition-all ease-in-out'/>
+            </button>
           </div>
         </section>
         <section 
@@ -148,27 +143,7 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
                 href={`/buy/${item.id}`}
                 key={item.id}
                 >
-
-                  <div
-                    className='
-                    flex flex-col gap-2 items-center w-[300px] h-[500px]
-                    shadow-md bg-gray-200 rounded-2xl overflow-hidden
-                    transition-transform duration-300 hover:scale-105 hover:shadow-indigo-700/70 hover:shadow-lg'
-                  >
-                   <Image
-                    src={item.imgPath}
-                    alt={item.nome}
-                    width={300}
-                    height={360}
-                    className='w-full h-[85%] object-cover'
-                  />
-                    <div className='flex flex-col w-full ps-2 items-start'>
-                      <p className='text-sm font-extralight'>{item.nome}</p>
-                      <span className='font-extralight text-black'>
-                        R$ <strong className='font-bold'>{item.price}</strong>
-                        </span>
-                    </div>
-                  </div>
+                  <ItemsCard item={item}/>
                 </Link>
               ))}
             </section>
