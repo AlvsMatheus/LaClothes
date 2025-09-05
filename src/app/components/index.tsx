@@ -21,7 +21,6 @@ import shoes6 from '../../assets/shoes6.jpg'
 import promotion1 from '../../assets/promotion1.jpg';
 import promotion2 from '../../assets/promotion2.webp';
 import promotion3 from '../../assets/promotion3.jpg';
-import loading from '../../assets/Eclipse@1x-1.1s-179px-179px.gif';
 
 export interface NavMessage {
   text: ReactNode;
