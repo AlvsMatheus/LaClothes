@@ -101,7 +101,7 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
   return (
     <article
       ref={sectionRef}
-      className='flex flex-col md:h-[180dvh] lg:h-[100dvh] w-full py-10'
+      className='flex flex-col min-h-screen py-10'
     >
       <section className='flex justify-start items-center w-full'>
         <div className='flex flex-col gap-10 justify-center items-center ps-10 md:ps-20'>

@@ -49,7 +49,7 @@ const Page = () => {
   }
 
   return (
-    <article className="flex bg-[url('/hero-background.jpg')] justify-center items-center h-screen md:h-[60rem] lg:h-screen w-full py-10 mt-30">
+    <article className="flex bg-[url('/hero-background.jpg')] justify-center items-center min-h-screen w-full py-10 mt-30">
         <div className='flex card-container w-[25rem] h-[50rem] md:w-[50rem] md:h-[50rem]'>
           <article className='flex flex-col md:flex-row md:justify-center md:items-center h-full w-full'>
             <section className='flex items-center w-[100%] md:w-[55%] h-full px-5 pt-14 md:pt-0'>
