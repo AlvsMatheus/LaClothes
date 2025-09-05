@@ -10,6 +10,7 @@ const ItemsCard = ({ item }: CardItemType) => {
   return (
     <div
         className='
+        card-item
         flex flex-col gap-2 items-center w-[300px] h-[500px]
         shadow-md bg-gray-200 rounded-2xl overflow-hidden
         transition-transform duration-300 hover:scale-105 hover:shadow-indigo-700/70 hover:shadow-lg'

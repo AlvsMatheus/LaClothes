@@ -4,11 +4,23 @@ import heroImage from './hero-image.jpg';
 import google from './google-logo.png';
 import linkedin from './linkedin-logo.png'
 import github from './github-logo.png'
+import loading from './Eclipse@1x-1.1s-179px-179px.gif'
+
 
 
 export type ImageType = {
   imgPath: StaticImageData; // 
 };
+
+export type headInfoType = {
+  id: number;
+  text: string;
+  imgPath?: StaticImageData; 
+};
+
+export const loadingImg = {
+  imgPath: loading
+}
 
 export const logoImg: ImageType = {
   imgPath: logo
@@ -30,11 +42,7 @@ export const logoGithub: ImageType = {
   imgPath: github
 };
 
-export type headInfoType = {
-  id: number;
-  text: string;
-  imgPath?: StaticImageData; 
-};
+
 
 export const headPhrase: headInfoType[] = [
   { id: 1, text: 'LaClothes' },

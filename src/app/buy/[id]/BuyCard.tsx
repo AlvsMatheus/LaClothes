@@ -55,9 +55,9 @@ const BuyCard = ({produto}: cardItem) => {
 
   return (
     <div className="card-animated">
-      <div className='flex card-container w-[25rem] h-[50rem] md:w-[50rem] md:h-[50rem]'>
-          <article className='flex flex-col md:flex-row md:justify-center md:items-center h-full w-full'>
-            <section className='cascade-effect flex items-center w-[100%] md:w-[55%] h-full px-5 pt-14 md:pt-0'>
+      <div className='flex card-container w-[25rem] h-[55rem] md:w-[50rem] md:h-[50rem] hover:scale-104 transition-all duration-150 ease-in-out '>
+          <article className='flex flex-col md:flex-row md:justify-center md:items-center h-full w-full '>
+            <section className='cascade-effect flex items-center w-full md:w-[55%] h-full px-5 pt-14 md:pt-0'>
               <Image
               src={produto.imgPath}
               alt={produto.nome}
@@ -67,13 +67,62 @@ const BuyCard = ({produto}: cardItem) => {
               />
             </section>
             <section className='flex flex-col justify-evenly items-center w-full md:w-[45%] h-[80%]'>
-              <section className='cascade-effect flex flex-col text-center gap-6'>
-                <h1 className='font-bold text-md'>{produto.nome}</h1>
-                 <span className='text-2xl font-bold text-black'>
-                  R$ {produto.price}
-                </span>
+              <section className='cascade-effect w-full md:w-[auto] flex flex-col text-center gap-5 ps-5 md:ps-0'>
+                <div className="flex flex-col gap-2">
+                  <h1 className='font-bold text-md'>{produto.nome}</h1>
+                   <span className='text-2xl font-bold text-black'>
+                    R$ {produto.price}
+                  </span>
+                </div>
+                <div className="flex md:flex-col justify-start items-start gap-2 h-[auto] md:h-20 w-full">
+                  <span className="font-bold">
+                    Cor
+                  </span>
+                  <div className="rounded-2xl h-5 w-5 border-1 p-[2px]">
+                    <div className="rounded-2xl h-full w-full bg-black"/>
+                  </div>
+                </div>
+                <section className="flex md:flex-col justify-start items-start gap-2 h-[auto] md:h-20 w-full">
+                  <span className="font-bold">
+                    Tamanho
+                  </span>
+                  <div className="flex gap-3 w-full">
+                    <div className="rounded-2xl h-7 w-7 border-1 bg-black p-1">
+                    <div className="flex items-center justify-center rounded-2xl h-full w-full">
+                      <span className="text-sm text-white">
+                        P
+                      </span>
+                    </div>
+                    
+                  </div>
+                   <div className="rounded-2xl h-7 w-7 border-1  p-1">
+                    <div className="flex items-center justify-center rounded-2xl h-full w-full">
+                      <span className="text-sm">
+                        M
+                      </span>
+                    </div>
+                    
+                  </div>
+                   <div className="rounded-2xl h-7 w-7 border-1 p-1">
+                    <div className="flex items-center justify-center rounded-2xl h-full w-full">
+                      <span className="text-sm ">
+                        G
+                      </span>
+                    </div>
+                    
+                  </div>
+                   <div className="rounded-2xl h-7 w-7 border-1 p-1">
+                    <div className="flex items-center justify-center rounded-2xl h-full w-full">
+                      <span className="text-sm ">
+                        GG
+                      </span>
+                    </div>
+                    
+                  </div>
+                  </div>
+                </section>
               </section>
-              <section className='cascade-effect flex flex-col gap-2'>
+              <section className='cascade-effect flex flex-col w-full px-4 gap-2'>
                 <button className='w-full p-2 bg-green-300 rounded-2xl font-bold'>Comprar</button>
                 <button className='w-full p-2 bg-black text-white rounded-2xl font-bold'>Adicionar ao carrinho</button>
               </section>

@@ -72,7 +72,31 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
       )
     }, element)
     return () => ctx.revert()
-  }, [])
+  }, []);
+
+  useEffect(() => {
+  if (!produtos.length) return;
+
+  const ctx = gsap.context(() => {
+    gsap.from(".card-item", {
+      opacity: 0,
+      x: 30,
+      duration: 0.6,
+      stagger: 0.2, // cada card demora 0.2s a mais
+      ease: "power3.out",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        toggleActions: "play none none none",
+      }
+    });
+  }, sectionRef); // usa sectionRef como contexto
+
+  return () => ctx.revert();
+}, [produtos]);
+
+
+ 
 
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
