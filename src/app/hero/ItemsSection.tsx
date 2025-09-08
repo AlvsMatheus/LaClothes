@@ -161,7 +161,7 @@ const ItemsSection = ({label, category}: ItemsSectionProps) => {
         ref={scrollRef}
         className='flex items-center w-full overflow-auto scrollbar-custom backdrop-blur-sm h-140'>
           <div>
-            <section className='w-[2000px] grid grid-cols-20 gap-90 px-10'>
+            <section className='w-[2000px] grid grid-cols-20 gap-90'>
               {produtos.map((item) => (
                 <Link
                 href={`/buy/${item.id}`}

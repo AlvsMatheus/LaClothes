@@ -159,7 +159,7 @@ const NavBar = () => {
           <span className="flex gap-3">
             <Link href="/user"><User /></Link>
             <a href=""><Heart /></a>
-            <a href=""><ShoppingBag /></a>
+            <Link href="/cart"><ShoppingBag /></Link>
           </span>
         </section>
       </div>

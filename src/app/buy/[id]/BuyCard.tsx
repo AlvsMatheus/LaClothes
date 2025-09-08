@@ -1,5 +1,7 @@
 "use client"
 
+import { auth, db } from "@/app/config/config-firebase"
+import { doc, collection, addDoc } from "firebase/firestore"
 import { ProdutosTipos } from "@/app/types"
 import Image from "next/image"
 import Link from "next/link"
@@ -14,6 +16,27 @@ interface cardItem {
 
 
 const BuyCard = ({produto}: cardItem) => {
+
+  const handleAddToCart = async (produto: ProdutosTipos) => {
+    const user = auth.currentUser
+    if (!user) {
+      alert("Você precisa estar logado para adicionar ao carrinho")
+      return
+    }
+    try{
+
+      const cartRef = collection(doc(db, "users", user.uid), "cart")
+      await addDoc(cartRef, {
+        ...produto,
+        quantity:1,
+        addedAt: new Date(),
+      })
+      console.log("Produto adicionado ao carrinho")
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
 
   const [animation, setAnimation] = useState<boolean>(false)
 
@@ -132,7 +155,13 @@ const BuyCard = ({produto}: cardItem) => {
                      label="Comprar" bg="green-300" bgmask="green-400" font="bold" textColor="black" textColorHover="black"/>
                   </div>
                 </Link>
-                <ButtonFill label="Adicionar ao carrinho" bg="black" bgmask="white" font="extralight" textColor="white" textColorHover="black"/>
+                <ButtonFill 
+                onClick={() => handleAddToCart(produto)}
+                label="Adicionar ao carrinho" 
+                bg="black" bgmask="white" 
+                font="extralight" 
+                textColor="white" 
+                textColorHover="black"/>
               </section>
             </section>
           </article>

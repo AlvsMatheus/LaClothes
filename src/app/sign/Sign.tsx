@@ -16,11 +16,13 @@ const Sign = () => {
   const signIn = async (e: React.MouseEvent) => {
     e.preventDefault();
     try{
+      let cred
       if (mode === "Login") {
-        await signInWithEmailAndPassword(auth, email, password);
+        cred = await signInWithEmailAndPassword(auth, email, password);
       } else {
-        await createUserWithEmailAndPassword(auth, email, password);
+        cred = await createUserWithEmailAndPassword(auth, email, password);
       }
+      console.log("UID do user:", cred.user.uid)
       router.push("/user");
     } catch(err) {
       console.error(err)
@@ -29,8 +31,9 @@ const Sign = () => {
 
   const signInGoogle = async (e :React.MouseEvent) => {
     e.preventDefault();
+    let cred
     try{
-      await signInWithPopup(auth, googleProvider);
+    cred = await signInWithPopup(auth, googleProvider);
     } catch(err) {
       console.error(err)
     }
