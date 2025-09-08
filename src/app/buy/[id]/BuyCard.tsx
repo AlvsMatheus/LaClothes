@@ -5,6 +5,7 @@ import Image from "next/image"
 import Link from "next/link"
 import gsap from "gsap"
 import { useEffect, useState } from "react"
+import ButtonFill from "@/app/components/ButtonFill"
 
 interface cardItem {
   produto: ProdutosTipos
@@ -117,14 +118,21 @@ const BuyCard = ({produto}: cardItem) => {
                         GG
                       </span>
                     </div>
-                    
                   </div>
                   </div>
                 </section>
               </section>
-              <section className='cascade-effect flex flex-col w-full px-4 gap-2'>
-                <button className='w-full p-2 bg-green-300 rounded-2xl font-bold'>Comprar</button>
-                <button className='w-full p-2 bg-black text-white rounded-2xl font-bold'>Adicionar ao carrinho</button>
+              <section className='cascade-effect flex flex-col w-[80%] px-4 gap-2'>
+                <Link
+                 className="h-full w-full"
+                 href="/payment"
+                >
+                  <div className="h-full w-full">
+                    <ButtonFill
+                     label="Comprar" bg="green-300" bgmask="green-400" font="bold" textColor="black" textColorHover="black"/>
+                  </div>
+                </Link>
+                <ButtonFill label="Adicionar ao carrinho" bg="black" bgmask="white" font="extralight" textColor="white" textColorHover="black"/>
               </section>
             </section>
           </article>
