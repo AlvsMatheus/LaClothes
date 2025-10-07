@@ -1,7 +1,7 @@
 "use client"
 
 import { auth, db } from "@/app/config/config-firebase"
-import { doc, collection, addDoc } from "firebase/firestore"
+import { doc, setDoc } from "firebase/firestore"
 import { ProdutosTipos } from "@/app/types"
 import Image from "next/image"
 import Link from "next/link"
@@ -23,18 +23,18 @@ const BuyCard = ({produto}: cardItem) => {
       alert("Você precisa estar logado para adicionar ao carrinho")
       return
     }
-    try{
-
-      const cartRef = collection(doc(db, "users", user.uid), "cart")
-      await addDoc(cartRef, {
-        ...produto,
-        quantity:1,
-        addedAt: new Date(),
-      })
-      console.log("Produto adicionado ao carrinho")
-    } catch(err) {
-      console.error(err)
-    }
+    try {
+    // usar ID do produto para o documento do carrinho
+    const itemRef = doc(db, "users", user.uid, "cart", produto.id)
+    await setDoc(itemRef, {
+      ...produto,
+      quantity: 1,
+      addedAt: new Date(),
+    }, { merge: true }) // merge evita sobrescrever caso já exista
+    console.log("Produto adicionado ao carrinho")
+  } catch(err) {
+    console.error(err)
+  }
   }
 
 

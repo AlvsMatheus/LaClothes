@@ -190,7 +190,7 @@ const NavBar = () => {
         <li><Link href="/" onClick={() => setSideMenu(false)}>Início</Link></li>
         <li><Link href="/user" onClick={() => setSideMenu(false)}>Perfil</Link></li>
         <li><a href="#">Favoritos</a></li>
-        <li><a href="#">Carrinho</a></li>
+        <li><Link href="/cart">Carrinho</Link></li>
       </ul>
     </div>
   </>

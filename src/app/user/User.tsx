@@ -15,6 +15,7 @@ const User = () => {
       setFirebaseUser(user)
       setLoading(false)
     })
+
     return () => unsubscribe();
   }, [])
 
@@ -26,7 +27,6 @@ const User = () => {
     )
   }
 
-  // Se não estiver logado, mostra a tela de login
   if (!firebaseUser) {
     return <Sign />
   }
