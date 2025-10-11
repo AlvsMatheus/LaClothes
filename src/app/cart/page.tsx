@@ -7,6 +7,7 @@ import Sign from '../sign/Sign'
 import ItemCart from './ItemCart';
 import type { ProductCart } from './CartItemsType';
 import ItemCartMobile from './ItemCartMobile';
+import PaySection from './PaySection';
 
 
 
@@ -91,8 +92,7 @@ const page = () => {
 
             </section>
             <section className='w-full md:w-[30%] h-100 bg-white/10 backdrop-blur-2xl rounded-2xl'>
-                
-
+                <PaySection />
             </section>
         </article>
         )
