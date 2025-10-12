@@ -98,11 +98,11 @@ const PaySection = () => {
   };
 
   return (
-    <article className="flex flex-col justify-evenly w-full min-h-full px-10">
+    <article className="flex flex-col gap-10 justify-evenly w-full min-h-full px-10 py-10">
       <section className="text-white font-bold text-center text-3xl">
         Resumo do Pedido:
       </section>
-      <section className="h-30 w-full flex flex-col justify-center items-start gap-4 text-white font-bold">
+      <section className="h-30 w-full flex flex-col justify-center items-start gap-7 text-white font-bold">
         <form
           onSubmit={handleSubmit}
           className="flex border-1 border-blue-500 rounded-3xl h-10"
@@ -162,7 +162,7 @@ const PaySection = () => {
         )}
       </section>
 
-      <section className="flex flex-col justify-evenly items-center h-40 w-full text-white font-bold">
+      <section className="flex flex-col gap-10 justify-evenly items-center w-full text-white font-bold">
         <div className="w-full flex justify-between">
           <span>Subtotal:</span>
           <span>R$ {subTotal.toFixed(2)}</span>
@@ -181,7 +181,7 @@ const PaySection = () => {
         </div>
         <span>
           <ButtonFill
-            onClick={handlePayment} // MODIFICADO
+            onClick={handlePayment} 
             label="Ir ao pagamento"
             bg="bg-green-400"
             bgmask="bg-green-500"

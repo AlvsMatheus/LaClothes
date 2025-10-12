@@ -106,7 +106,7 @@ app.post("/create-checkout-session", async (req, res) => {
       payment_method_types: ['card', 'boleto'],
       line_items,
       mode: 'payment',
-      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/sucesso`,
+      success_url: `${process.env.FRONTEND_URL_SUCCESS || 'http://localhost:3000'}/success`,
       cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/carrinho`,
     });
 

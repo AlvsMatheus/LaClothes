@@ -5,7 +5,7 @@ import { heroimages } from "@/assets";
 import { useState, useRef, useEffect } from 'react';
 import { headInfo } from "@/app/components/index";
 
-const Header = () => {
+const page = () => {
   const heroimage = useRef<HTMLDivElement>(null);
   const [show, setShow] = useState<boolean>(false);
   const [activeId, setActiveId] = useState<number | null>(null);
@@ -86,4 +86,4 @@ const Header = () => {
   )
 }
 
-export default Header
+export default page

@@ -8,20 +8,27 @@ import Link from "next/link";
 import gsap from "gsap";
 import { useEffect, useState } from "react";
 import ButtonFill from "@/app/components/ButtonFill";
+import { useRouter } from "next/navigation"; 
+import icons from ".";
 
 interface cardItem {
   produto: ProdutosTipos;
 }
 
 const BuyCard = ({ produto }: cardItem) => {
-  const handleAddToCart = async (produto: ProdutosTipos) => {
+  const router = useRouter(); 
+  const [showNotification, setShowNotification] = useState(false);
+  const [animation, setAnimation] = useState<boolean>(false);
+
+
+  // Fluxo de COMPRA IMEDIATA: Adiciona e Redireciona APÓS confirmação do Firebase.
+  const handleBuyNow = async (produto: ProdutosTipos) => {
     const user = auth.currentUser;
     if (!user) {
-      alert("Você precisa estar logado para adicionar ao carrinho");
+      alert("Você precisa estar logado para comprar");
       return;
     }
     try {
-      // usar ID do produto para o documento do carrinho
       const itemRef = doc(db, "users", user.uid, "cart", produto.id);
       await setDoc(
         itemRef,
@@ -31,30 +38,52 @@ const BuyCard = ({ produto }: cardItem) => {
           addedAt: new Date(),
         },
         { merge: true }
-      ); // merge evita sobrescrever caso já exista
+      );
+      
+      console.log("Produto adicionado. Redirecionando para o carrinho...");
+
+      // Redirecionamento seguro: SÓ acontece após o await ser completado.
+      router.push("/cart"); 
+      
+    } catch (err) {
+      console.error(err);
+      alert("Ocorreu um erro ao processar a compra imediata.");
+    }
+  };
+
+  // Fluxo ADICIONAR AO CARRINHO: Apenas adiciona e mostra notificação.
+  const handleAddToCart = async (produto: ProdutosTipos) => {
+    const user = auth.currentUser;
+    if (!user) {
+      alert("Você precisa estar logado para adicionar ao carrinho");
+      return;
+    }
+    try {
+      const itemRef = doc(db, "users", user.uid, "cart", produto.id);
+      await setDoc(
+        itemRef,
+        {
+          ...produto,
+          quantity: 1,
+          addedAt: new Date(),
+        },
+        { merge: true }
+      ); 
       console.log("Produto adicionado ao carrinho");
+      
+      setShowNotification(true);
     } catch (err) {
       console.error(err);
     }
   };
 
-  const [animation, setAnimation] = useState<boolean>(false);
+
 
   useEffect(() => {
     gsap.fromTo(
       ".card-animated",
-      {
-        x: -50,
-        scale: 0,
-        blur: 1,
-      },
-      {
-        x: 0,
-        scale: 1,
-        duration: 1,
-        ease: "power3.inOut",
-        blur: 0,
-      }
+      { x: -50, scale: 0, blur: 1 },
+      { x: 0, scale: 1, duration: 1, ease: "power3.inOut", blur: 0 }
     );
     setAnimation(true);
   }, []);
@@ -63,25 +92,36 @@ const BuyCard = ({ produto }: cardItem) => {
     if (animation) {
       gsap.fromTo(
         ".cascade-effect",
-        {
-          x: -10,
-          filter: "blur(10px)",
-        },
-        {
-          x: 0,
-          filter: "blur(0px)",
-          duration: 1.5,
-          ease: "power2.out",
-          stagger: 0.5,
-        }
+        { x: -10, filter: "blur(10px)" },
+        { x: 0, filter: "blur(0px)", duration: 1.5, ease: "power2.out", stagger: 0.5 }
       );
     }
-  });
+  }, [animation]);
+  
+  
+  useEffect(() => {
+    if (showNotification) {
+        const timer = setTimeout(() => setShowNotification(false), 3000);
+        return () => clearTimeout(timer);
+    }
+  }, [showNotification]);
+
+
 
   return (
     <div className="card-animated">
+      
+  
+      {showNotification && (
+        <div className="fixed flex justify-center items-center gap-5 top-20 right-5 z-50 p-4 bg-green-500 text-white font-semibold rounded-lg shadow-xl animate-bounce">
+          <Image src={icons.check} alt="check" width={40} height={40}/> <p className="font-extralight">Item adicionado ao carrinho!</p>
+        </div>
+      )}
+
       <div className="flex card-container w-[25rem] h-[55rem] md:w-[50rem] md:h-[50rem] hover:scale-104 transition-all duration-150 ease-in-out ">
         <article className="flex flex-col md:flex-row md:justify-center md:items-center h-full w-full ">
+          
+          {/* Seção de Imagem */}
           <section className="cascade-effect flex items-center w-full md:w-[55%] h-full px-5 pt-14 md:pt-0">
             <Image
               src={produto.imgPath}
@@ -91,6 +131,8 @@ const BuyCard = ({ produto }: cardItem) => {
               className="w-full h-[80%] rounded-2xl"
             />
           </section>
+          
+          {/* Seção de Detalhes e Botões */}
           <section className="flex flex-col justify-evenly items-center w-full md:w-[45%] h-[80%]">
             <section className="cascade-effect w-full md:w-[auto] flex flex-col text-center gap-5 ps-5 md:ps-0">
               <div className="flex flex-col gap-2">
@@ -99,21 +141,26 @@ const BuyCard = ({ produto }: cardItem) => {
                   R$ {produto.price}
                 </span>
               </div>
+              
+              {/* Opções de Cor */}
               <div className="flex md:flex-col justify-start items-start gap-2 h-[auto] md:h-20 w-full">
                 <span className="font-bold">Cor</span>
                 <div className="rounded-2xl h-5 w-5 border-1 p-[2px]">
                   <div className="rounded-2xl h-full w-full bg-black" />
                 </div>
               </div>
+              
+              {/* Opções de Tamanho */}
               <section className="flex md:flex-col justify-start items-start gap-2 h-[auto] md:h-20 w-full">
                 <span className="font-bold">Tamanho</span>
                 <div className="flex gap-3 w-full">
+                  {/* ... (Seus divs de Tamanho P, M, G, GG) ... */}
                   <div className="rounded-2xl h-7 w-7 border-1 bg-black p-1">
                     <div className="flex items-center justify-center rounded-2xl h-full w-full">
                       <span className="text-sm text-white">P</span>
                     </div>
                   </div>
-                  <div className="rounded-2xl h-7 w-7 border-1  p-1">
+                  <div className="rounded-2xl h-7 w-7 border-1  p-1">
                     <div className="flex items-center justify-center rounded-2xl h-full w-full">
                       <span className="text-sm">M</span>
                     </div>
@@ -131,19 +178,24 @@ const BuyCard = ({ produto }: cardItem) => {
                 </div>
               </section>
             </section>
+
+            {/* Seção de Botões de Ação */}
             <section className="cascade-effect flex flex-col w-[80%] px-4 gap-2">
-              <Link className="h-full w-full" href="/payment">
-                <div className="h-full w-full">
-                  <ButtonFill
-                    label="Comprar"
-                    bg="bg-green-300"
-                    bgmask="bg-green-400"
-                    font="bold"
-                    textColor="black"
-                    textColorHover="black"
-                  />
-                </div>
-              </Link>
+              
+              {/* Botão COMPRAR (Adiciona e Redireciona) */}
+              <div className="h-full w-full">
+                <ButtonFill
+                  onClick={() => handleBuyNow(produto)}
+                  label="Comprar"
+                  bg="bg-green-300"
+                  bgmask="bg-green-400"
+                  font="bold"
+                  textColor="black"
+                  textColorHover="black"
+                />
+              </div>
+
+              {/* Botão ADICIONAR AO CARRINHO (Apenas Adiciona) */}
               <ButtonFill
                 onClick={() => handleAddToCart(produto)}
                 label="Adicionar ao carrinho"
@@ -156,7 +208,8 @@ const BuyCard = ({ produto }: cardItem) => {
             </section>
           </section>
         </article>
-        {/*Back button*/}
+        
+        {/* Back button */}
         <div className="card-back-button">
           <Link
             href="/"
