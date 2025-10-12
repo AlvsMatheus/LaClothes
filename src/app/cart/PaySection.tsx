@@ -19,7 +19,6 @@ interface Frete {
 const PaySection = () => {
   const [cep, setCep] = useState<string>("");
   const [freteSelecionado, setFreteSelecionado] = useState<Frete | null>(null);
-  const [quantidade, setQuantidade] = useState(0);
   const [cartItems, setCartItems] = useState<ProductCart[]>([]);
   const [moto, setmoto] = useState<boolean>(false);
   const [userId] = useState("d2gtOr1BG6TST58WXdTVVfrJDrA3");
