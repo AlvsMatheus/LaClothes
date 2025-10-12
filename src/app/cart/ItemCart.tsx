@@ -1,7 +1,7 @@
 import React from 'react'
 import type { ProductCart } from './CartItemsType'
 import Image from 'next/image'
-import { auth, db } from '../config/config-firebase'
+import { db } from '../config/config-firebase'
 import { doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { Trash2, Minus, Plus } from "lucide-react"
 
