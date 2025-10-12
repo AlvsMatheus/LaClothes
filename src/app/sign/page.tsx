@@ -1,7 +1,7 @@
 import React from 'react'
 import Sign from './Sign'
 
-const page = () => {
+const Page = () => {
   return (
     <section>
         <Sign/>
@@ -9,4 +9,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

@@ -11,7 +11,7 @@ import PaySection from "./PaySection";
 import ButtonFill from "../components/ButtonFill";
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [cartItems, setCartItems] = useState<ProductCart[]>([]);
@@ -102,4 +102,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

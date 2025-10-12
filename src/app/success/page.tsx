@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import ButtonFill from '../components/ButtonFill'
 
-const page = () => {
+const Page = () => {
   return (
     <article className='flex flex-col gap-20 justify-center items-center min-h-screen w-full bg-[url(/hero-background.jpg)]'>
       <section className='flex flex-col justify-center items-center h-full w-full gap-4'>
@@ -28,4 +28,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page
