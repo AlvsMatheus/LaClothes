@@ -2,7 +2,7 @@
 
 
 
-## LaClothes the perfection can now fit for you 🌟
+<h1 align="center"> LaClothes the perfection can now fit for you 🌟 </h1>
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&pause=1000&color=F7F7F7&vCenter=true&repeat=false&width=443&lines=About)](https://git.io/typing-svg)
 
