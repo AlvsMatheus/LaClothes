@@ -1,10 +1,13 @@
 ![imagem do projeto](./src/assets/hero-image.jpg)
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&weight=500&size=25&duration=4987&pause=1000&color=D122F7&background=FF000300&vCenter=true&width=435&lines=Welcome+to+Portfolio+Retro!)](https://git.io/typing-svg)
 
-[![Typing SVG](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&pause=1000&color=F7F7F7&vCenter=true&repeat=false&width=443&lines=About+)](https://git.io/typing-svg)
 
-This is my portfolio with 8 bit theme and I created it to showcase my projects, skills, about me and how to contact me. I hope you enjoy the experience of meet it. Enjoy yourself!
+## LaClothes the perfection can now fit for you 🌟
+
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&pause=1000&color=F7F7F7&vCenter=true&repeat=false&width=443&lines=About)](https://git.io/typing-svg)
+
+Laclothes is a fictional clothing store that I've built and my objective is make you feel in a real store when you can register, use the cart for store your clothes, simule the buying, and more! 
+
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Pixelify+Sans&pause=1000&color=F7F7F7&vCenter=true&repeat=false&width=443&lines=Technologies)](https://git.io/typing-svg)
 
