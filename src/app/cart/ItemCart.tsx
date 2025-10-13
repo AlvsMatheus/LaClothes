@@ -28,7 +28,7 @@ const ItemCart = ( { item, userId }: Product ) => {
       await updateDoc(itemRef, {
         quantity: item.quantity - 1,
       })
-    } else {
+    } else {   
       await deleteDoc(itemRef)
     }
   }
