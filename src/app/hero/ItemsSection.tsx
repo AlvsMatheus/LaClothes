@@ -12,95 +12,108 @@ gsap.registerPlugin(ScrollTrigger);
 
 const ItemsSection = ({ label, category }: ItemsSectionProps) => {
   const [produtos, setProdutos] = useState<ProdutosTipos[]>([]);
-  const produtoscolecaoRef = collection(db, "products");
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [underline, setUnderline] = useState<boolean>(false);
+  // ⚠️ ATENÇÃO: Removemos a declaração de produtoscolecaoRef daqui para que não seja uma dependência instável.
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [underline, setUnderline] = useState<boolean>(false);
+  const sectionRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const getProdutos = async () => {
-      try {
-        const data = await getDocs(produtoscolecaoRef);
-        const filteredData: ProdutosTipos[] = data.docs.map((doc) => ({
-          ...(doc.data() as ProdutosTipos),
-          id: doc.id,
-        }));
 
-        if (category === "em-alta") {
-          setProdutos(filteredData.filter((item) => item.emAlta === true));
-        } else {
-          const produtosFiltrados = filteredData.filter(
-            (item) => item.category === category
-          );
-          setProdutos(produtosFiltrados);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    getProdutos();
-  }, [category, produtoscolecaoRef]);
+  // Use useMemo para garantir que a referência da coleção só seja criada uma vez.
+  // No entanto, como 'db' é estável e 'products' é constante, 
+  // é mais limpo chamar collection(db, "products") diretamente no useEffect.
+  
+  useEffect(() => {
+    // Definimos a referência da coleção DENTRO do useEffect
+    const produtoscolecaoRef = collection(db, "products");
+    
+    const getProdutos = async () => {
+      try {
+        // Como getDocs é uma função que não depende de nada além do category e da referência estável,
+        // a única dependência que deve acionar a busca é o 'category'.
+        const data = await getDocs(produtoscolecaoRef);
+        const filteredData: ProdutosTipos[] = data.docs.map((doc) => ({
+          ...(doc.data() as ProdutosTipos),
+          id: doc.id,
+        }));
 
-  const sectionRef = useRef<HTMLDivElement>(null);
+        if (category === "em-alta") {
+          setProdutos(filteredData.filter((item) => item.emAlta === true));
+        } else {
+          const produtosFiltrados = filteredData.filter(
+            (item) => item.category === category
+          );
+          setProdutos(produtosFiltrados);
+        }
+      } catch (err) {
+        console.error("Erro ao buscar produtos:", err);
+      }
+    };
+    getProdutos();
+    // A única dependência que deve acionar a re-execução é o 'category'.
+    // A referência 'produtoscolecaoRef' é criada internamente e é estável.
+  }, [category]); 
 
-  useEffect(() => {
-    const element = sectionRef.current;
-    if (!element) return;
+  // --- O resto dos useEffects de animação e o código JSX permanecem os mesmos ---
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        element,
-        { opacity: 0, x: -100 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: element,
-            start: "top 80%",
-            end: "top 30%",
-            toggleActions: "play none none none",
-            scrub: false,
-            markers: false,
-            onEnter: () => {
-              setUnderline(true);
-            },
-          },
-        }
-      );
-    }, element);
-    return () => ctx.revert();
-  }, []);
+  useEffect(() => {
+    const element = sectionRef.current;
+    if (!element) return;
 
-  useEffect(() => {
-    if (!produtos.length) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        element,
+        { opacity: 0, x: -100 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: element,
+            start: "top 80%",
+            end: "top 30%",
+            toggleActions: "play none none none",
+            scrub: false,
+            markers: false,
+            onEnter: () => {
+              setUnderline(true);
+            },
+          },
+        }
+      );
+    }, element);
+    return () => ctx.revert();
+  }, []);
 
-    const ctx = gsap.context(() => {
-      gsap.from(".card-item", {
-        opacity: 0,
-        x: 30,
-        duration: 0.6,
-        stagger: 0.2, // cada card demora 0.2s a mais
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-      });
-    }, sectionRef); // usa sectionRef como contexto
+  useEffect(() => {
+    if (!produtos.length) return;
 
-    return () => ctx.revert();
-  }, [produtos]);
+    const ctx = gsap.context(() => {
+      gsap.from(".card-item", {
+        opacity: 0,
+        x: 30,
+        duration: 0.6,
+        stagger: 0.2, // cada card demora 0.2s a mais
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      });
+    }, sectionRef); // usa sectionRef como contexto
 
-  const scroll = (direction: "left" | "right") => {
-    if (!scrollRef.current) return;
-    const amount = 1000;
-    scrollRef.current.scrollBy({
-      left: direction === "right" ? amount : -amount,
-      behavior: "smooth",
-    });
-  };
+    return () => ctx.revert();
+  }, [produtos]);
+
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+    const amount = 1000;
+    scrollRef.current.scrollBy({
+      left: direction === "right" ? amount : -amount,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <article ref={sectionRef} className="flex flex-col min-h-screen py-10">

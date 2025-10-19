@@ -5,7 +5,7 @@ interface ButtonType {
     font: string,
     textColor: string
     textColorHover: string
-    onClick?: () => Promise<void>
+    onClick?: () => void | Promise<void>
 }
 
 const ButtonFill = ({label, bg, bgmask, font, textColor, textColorHover, onClick}: ButtonType) => {

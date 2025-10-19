@@ -8,6 +8,9 @@ import { collection, onSnapshot } from "firebase/firestore";
 import icons from "./index";
 import ButtonFill from "../components/ButtonFill";
 import type { ProductCart } from "./CartItemsType";
+import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { loadingImg } from '@/assets'
 
 interface Frete {
   id: string;
@@ -17,84 +20,158 @@ interface Frete {
 }
 
 const PaySection = () => {
-  const [cep, setCep] = useState<string>("");
-  const [freteSelecionado, setFreteSelecionado] = useState<Frete | null>(null);
-  const [cartItems, setCartItems] = useState<ProductCart[]>([]);
-  const [moto, setmoto] = useState<boolean>(false);
-  const [userId] = useState("d2gtOr1BG6TST58WXdTVVfrJDrA3");
-  const [subTotal, setSubTotal] = useState(0);
+  const router = useRouter();
+  const [cep, setCep] = useState<string>("");
+  const [freteSelecionado, setFreteSelecionado] = useState<Frete | null>(null);
+  const [cartItems, setCartItems] = useState<ProductCart[]>([]);
+  const [moto, setmoto] = useState<boolean>(false);
+  const { user, isLoading: authLoading } = useAuth();
+  const [subTotal, setSubTotal] = useState(0);
+  
+  const {
+    data: fretes,
+    isLoading,
+    isError,
+    refetch,
+  } = useCalcularFrete(cep, cartItems.length);
 
-  useEffect(() => {
-    const carrinhoRef = collection(db, "users", userId, "cart");
-    const unsubscribe = onSnapshot(carrinhoRef, (snapshot) => {
-      const items = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as ProductCart[];
-      setCartItems(items);
-    });
-    return () => unsubscribe(); // Limpa o listener
-  }, [userId]);
+  // --- 2. CHAMADA DE TODOS OS useEffect's ---
 
-  useEffect(() => {
-    const newSubtotal = cartItems.reduce((acc, item) => {
-      return acc + Number(item.price) * item.quantity;
-    }, 0);
-    setSubTotal(newSubtotal);
-  }, [cartItems]);
+  // 2a. Carregamento do carrinho do Firebase
+  useEffect(() => {
+    if (authLoading || !user) return;
+    const userId = user.uid
+    const carrinhoRef = collection(db, "users", userId, "cart");
+    const unsubscribe = onSnapshot(carrinhoRef, (snapshot) => {
+      const items = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as ProductCart[];
+      setCartItems(items);
+    });
+    return () => unsubscribe(); // Limpa o listener
+  }, [user, authLoading]);
 
-  const {
-    data: fretes,
-    isLoading,
-    isError,
-    refetch,
-  } = useCalcularFrete(cep, cartItems.length);
+  // 2b. Cálculo do subtotal
+  useEffect(() => {
+    const newSubtotal = cartItems.reduce((acc, item) => {
+      return acc + Number(item.price) * item.quantity;
+    }, 0);
+    setSubTotal(newSubtotal);
+  }, [cartItems]);
+  
+  // --- 3. LÓGICA E FUNÇÕES ---
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (cep.replace(/\D/g, "").length === 8) {
-      // Validação simples de CEP
-      refetch();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (cep.replace(/\D/g, "").length === 8) {
+      refetch();
+    }
+  };
+
+  const handleSelectFrete = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const freteId = e.target.value;
+    const freteEscolhido = fretes?.find((f) => f.id.toString() === freteId);
+    setFreteSelecionado(freteEscolhido || null);
+  };
+
+  const valorTotal =
+    subTotal + (freteSelecionado ? Number(freteSelecionado.preco) : 0);
+
+  const handlePayment = async () => {
+
+    if (!user) {
+            // Redireciona para login se o usuário não estiver autenticado
+            router.push("/sign"); 
+            return;
+        }
+
+    // 🚨 CORREÇÃO: Checa se o carrinho está vazio antes de chamar a API 🚨
+    if (cartItems.length === 0) {
+        // Use uma mensagem clara no console e/ou exiba um modal na tela real
+        console.error("O carrinho está vazio. Adicione itens antes de prosseguir.");
+        return;
     }
-  };
 
-  const handleSelectFrete = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const freteId = e.target.value;
-    const freteEscolhido = fretes?.find((f) => f.id.toString() === freteId);
-    setFreteSelecionado(freteEscolhido || null);
-  };
+    if (!freteSelecionado) {
+        // Checa se uma opção de frete foi selecionada
+        console.error("Por favor, selecione uma opção de frete.");
+        return;
+    }
 
-  // MODIFICADO: Cálculo do valor total, agora mais simples e seguro
-  const valorTotal =
-    subTotal + (freteSelecionado ? Number(freteSelecionado.preco) : 0);
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: cartItems,
+          frete: freteSelecionado,
+        }),
+      });
 
-  // NOVO: Função para iniciar o processo de pagamento
-  const handlePayment = async () => {
-    if (!freteSelecionado) {
-      alert("Por favor, selecione uma opção de frete.");
-      return;
-    }
+      if (!res.ok) {
+        // Tenta extrair o erro do corpo da resposta para debug
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Falha ao criar sessão de pagamento");
+      }
 
-    try {
-      // Lembre-se de trocar localhost pela URL do seu backend em produção
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: cartItems,
-          frete: freteSelecionado,
-        }),
-      });
+      const { url } = await res.json();
+      window.location.href = url; // Redireciona para a página do Stripe
+    } catch (error) {
+      console.error("Ocorreu um erro ao tentar ir para o pagamento:", error);
+    }
+  };
 
-      if (!res.ok) throw new Error("Falha ao criar sessão de pagamento");
+  // --- 4. RETORNOS ANTECIPADOS (LOADING/AUTH) ---
 
-      const { url } = await res.json();
-      window.location.href = url; // Redireciona para a página do Stripe
-    } catch (error) {
-      console.error(error);
-      alert("Ocorreu um erro ao tentar ir para o pagamento.");
-    }
-  };
+  if (authLoading) {
+        return (
+        <div className="flex bg-black justify-center items-center h-screen text-white">
+           <Image
+            src={loadingImg.imgPath} 
+            alt="loading gif"
+            height={100}
+            width={100}
+            unoptimized={true} 
+          />
+        </div>
+      )
+  };
+  
+    if (!user) {
+        return (
+            <div className="flex justify-center items-center h-screen text-white bg-black p-4">
+                <p className="text-xl text-center">
+                    Faça login para prosseguir para o pagamento.
+                </p>
+            </div>
+        )
+    }
+
+
+  // --- 5. VARIÁVEL JSX CONDICIONAL ---
+
+  const paymentButton = !user ? (
+        <ButtonFill
+            onClick={() => router.push("/sign")} 
+            label="Fazer Login para Pagar"
+            bg="bg-red-400"
+            bgmask="bg-red-500"
+            font="bold"
+            textColor="white"
+            textColorHover="white/90"
+        />
+    ) : (
+        <ButtonFill
+            onClick={handlePayment} 
+            label="Ir ao pagamento"
+            bg="bg-green-400"
+            bgmask="bg-green-500"
+            font="bold"
+            textColor="white"
+            textColorHover="white/90"
+        />
+    );
 
   return (
     <article className="flex flex-col gap-10 justify-evenly w-full min-h-full px-10 py-10">
@@ -179,15 +256,7 @@ const PaySection = () => {
           <span>R$ {valorTotal.toFixed(2)}</span>
         </div>
         <span>
-          <ButtonFill
-            onClick={handlePayment} 
-            label="Ir ao pagamento"
-            bg="bg-green-400"
-            bgmask="bg-green-500"
-            font="bold"
-            textColor="white"
-            textColorHover="white/90"
-          />
+          {paymentButton}
         </span>
       </section>
     </article>
