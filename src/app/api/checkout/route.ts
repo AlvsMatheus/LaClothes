@@ -5,20 +5,20 @@ import { db } from "../../../utils/firebaseAdmin";
 
 // Interfaces básicas para tipagem
 interface ClientItem {
-    id: string;
-    quantity: number;
-    // Opcional: Adicionar outros campos que vêm do carrinho (como price ou nome)
+    id: string;
+    quantity: number;
+    // Opcional: Adicionar outros campos que vêm do carrinho (como price ou nome)
 }
 
 interface ClientFrete {
-    nome: string;
-    preco: number;
+    nome: string;
+    preco: number;
 }
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey) {
-    // Isso deve ser um erro fatal para o servidor
-    throw new Error("ERRO FATAL: STRIPE_SECRET_KEY não está definida nas variáveis de ambiente.");
+    // Isso deve ser um erro fatal para o servidor
+    throw new Error("ERRO FATAL: STRIPE_SECRET_KEY não está definida nas variáveis de ambiente.");
 }
 
 const stripe = new Stripe(stripeSecretKey)
@@ -29,9 +29,9 @@ export async function POST(request: NextRequest) {
 
   // Desestruturação com tipagem
   const { 
-    items: clientItems, 
-    frete: clientFrete 
-  }: { items: ClientItem[]; frete: ClientFrete } = reqBody;
+    items: clientItems, 
+    frete: clientFrete 
+  }: { items: ClientItem[]; frete: ClientFrete } = reqBody;
 
   const FRONTEND_URL_SUCCESS = process.env.NEXT_PUBLIC_VERCEL_URL
     ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
@@ -42,55 +42,41 @@ export async function POST(request: NextRequest) {
   if (!clientItems || clientItems.length === 0 || !clientFrete) {
     return NextResponse.json(
       { 
-          error: "Dados do carrinho ou frete ausentes, ou carrinho vazio.",
-          details: "O carrinho deve ter itens e o frete deve ser selecionado."
-      },
+          error: "Dados do carrinho ou frete ausentes, ou carrinho vazio.",
+          details: "O carrinho deve ter itens e o frete deve ser selecionado."
+      },
       { status: 400 }
     );
   }
 
   try {
-    // 2. Busca e Mapeamento dos Produtos Oficiais
-    // IDs dos produtos no carrinho (estes são os IDs de documento do Firestore)
-    const productIds = clientItems.map((item) => item.id);
-
-    // Busca os produtos oficiais no Firestore pela coleção 'products'
-    const productsSnapshot = await db
-      .collection("products")
-      .where("id", "in", productIds) 
-      .get();
-
-    const officialProducts: Record<string, any> = {};
-
-    productsSnapshot.forEach((doc) => {
-      // Mapeia pelo ID (o ID que está no carrinho/Firebase)
-      const data = doc.data();
-      officialProducts[data.id] = data; 
-    });
-    
     const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
-    // 3. Montagem dos Itens para o Stripe
+    // 2. Montagem dos Itens para o Stripe (COM CONSULTA CORRETA)
     for (const item of clientItems) {
-      const officialProduct = officialProducts[item.id];
+      // 🚨 CORREÇÃO: Busca o produto pelo ID do DOCUMENTO
+      const productRef = db.collection("products").doc(item.id);
+      const productDoc = await productRef.get();
 
       // Checagem de segurança (ID do item do carrinho DEVE existir na base de dados)
-      if (!officialProduct) {
+      if (!productDoc.exists) {
         return NextResponse.json(
           {
             error: `Item "${item.id}" não encontrado na base de dados.`,
-            details: "Verifique se o ID existe na coleção 'products' e se o Firebase Admin está configurado corretamente."
+            details: "O item no carrinho não existe (ou foi removido) da coleção 'products'."
           },
           { status: 400 }
         );
       }
-      
-      // Checagem de estoque
-      if (officialProduct.stock < item.quantity) {
+
+      const officialProduct = productDoc.data();
+
+      // Checagem de estoque
+      if (!officialProduct || officialProduct.stock < item.quantity) {
         return NextResponse.json(
           {
-            error: `Item "${officialProduct.nome || item.id}" indisponível ou estoque insuficiente.`,
-            details: `Estoque disponível: ${officialProduct.stock}, Solicitado: ${item.quantity}`
+            error: `Item "${officialProduct?.nome || item.id}" indisponível ou estoque insuficiente.`,
+            details: `Estoque disponível: ${officialProduct?.stock}, Solicitado: ${item.quantity}`
           },
           { status: 400 }
         );
@@ -114,7 +100,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Adiciona o frete
+    // 3. Adiciona o frete
     line_items.push({
       price_data: {
         currency: "brl",
@@ -127,9 +113,10 @@ export async function POST(request: NextRequest) {
     });
 
     // 4. Criação da Sessão do Stripe
+    // 4. Criação da Sessão do Stripe
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card", "boleto"],
-      line_items,
+      line_items, // <-- O 'T' foi removido daqui
       mode: "payment",
       success_url: `${FRONTEND_URL_SUCCESS}/success`,
       cancel_url: `${FRONTEND_URL}/cart`,
