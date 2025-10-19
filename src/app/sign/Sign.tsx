@@ -19,28 +19,32 @@ const Sign = () => {
 
   const signIn = async (e: React.MouseEvent) => {
     e.preventDefault();
-    try{
-        // 1. Ação para autenticação, salvando o retorno diretamente
-        const userCredential = mode === "Login"
-            ? await signInWithEmailAndPassword(auth, email, password)
-            : await createUserWithEmailAndPassword(auth, email, password);
+    try {
+      let cred = null;
+      if (mode === "Login") {
+        cred = await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        cred = await createUserWithEmailAndPassword(auth, email, password);
+      }
 
-        // 2. Usando o novo nome da variável
-        console.log("UID do user:", userCredential.user.uid)
-        
-        // 3. Redirecionamento
+      if (cred) {
+        console.log("UID do user:", cred.user.uid);
         router.push("/user");
-        
-    } catch(err) {
-        console.error(err)
+      }
+    } catch (err) {
+      console.error(err);
     }
-}
+  };
 
   const signInGoogle = async (e: React.MouseEvent) => {
     e.preventDefault();
-    let cred;
     try {
-      cred = await signInWithPopup(auth, googleProvider);
+      const cred = await signInWithPopup(auth, googleProvider);
+
+      if (cred) {
+        console.log("UID Google do user:", cred.user.uid)
+        router.push("/user")
+      }
     } catch (err) {
       console.error(err);
     }
