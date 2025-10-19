@@ -3,16 +3,25 @@ import { NextResponse, NextRequest } from 'next/server';
 
 // Interface para tipar o corpo da requisição POST
 interface RequestBody {
-    cepDestino: string;
-    quantidade: number;
+    cepDestino: string;
+    quantidade: number;
 }
 
 // Interface para a resposta filtrada do Melhor Envio
 interface FreteOption {
-    id: number;
-    nome: string;
-    preco: string; // Preço vem como string da API, mantendo para precisão
-    prazo: number;
+    id: number;
+    nome: string;
+    preco: string; 
+    prazo: number;
+}
+
+// 🚨 CORREÇÃO: Interface para a resposta da API do Melhor Envio
+interface MelhorEnvioOption {
+  id: number;
+  name: string;
+  price: string;
+  delivery_time: number;
+  error?: string; // Campo de erro que a API pode retornar
 }
 
 // Função que lida com requisições POST
@@ -29,15 +38,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!cepDestino) {
     return NextResponse.json({ error: "CEP de destino é obrigatório." }, { status: 400 });
   }
-  
-  // Validação básica dos tokens de ambiente
-  if (!MELHOR_ENVIO_TOKEN || !MELHOR_ENVIO_EMAIL) {
-    console.error("ERRO: Tokens do Melhor Envio não configurados.");
-    return NextResponse.json(
-        { error: "Erro de configuração do servidor. Tokens do Melhor Envio ausentes." }, 
-        { status: 500 }
-    );
-  }
+  
+  // Validação básica dos tokens de ambiente
+  if (!MELHOR_ENVIO_TOKEN || !MELHOR_ENVIO_EMAIL) {
+    console.error("ERRO: Tokens do Melhor Envio não configurados.");
+    return NextResponse.json(
+        { error: "Erro de configuração do servidor. Tokens do Melhor Envio ausentes." }, 
+        { status: 500 }
+    );
+  }
 
   // As dimensões do item devem ser consistentes com o produto padrão.
   const itemBase = {
@@ -74,7 +83,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
 
     // O response.data pode ser um array de opções ou um objeto de erro
-    const data: any[] = response.data;
+    // 🚨 CORREÇÃO: Tipagem de 'data'
+    const data: MelhorEnvioOption[] = response.data;
 
     const opcoes: FreteOption[] = data
       .filter(opcao => !opcao.error) // Filtra apenas opções válidas (sem erro)
@@ -88,11 +98,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Usa NextResponse.json para retornar o JSON com status 200
     return NextResponse.json(opcoes); 
 
-  } catch (error: any) {
-    console.error("Erro ao calcular frete:", error.response?.data || error.message);
+  // 🚨 CORREÇÃO: Tipagem do 'catch'
+  } catch (error: unknown) {
+    let errorMessage = "Erro ao calcular frete";
+    let errorDetails: unknown = undefined;
+
+    // Extrai detalhes se for um erro do Axios
+    if (axios.isAxiosError(error)) {
+        errorMessage = error.message;
+        errorDetails = error.response?.data;
+        console.error("Erro ao calcular frete (Axios):", errorDetails || errorMessage);
+    } else if (error instanceof Error) {
+        errorMessage = error.message;
+        console.error("Erro ao calcular frete (Geral):", error);
+    } else {
+        console.error("Erro desconhecido ao calcular frete:", error);
+    }
+
     return NextResponse.json({ 
-      error: "Erro ao calcular frete", 
-      detalhes: error.response?.data 
+      error: errorMessage, 
+      detalhes: errorDetails 
     }, { status: 500 }); // Retorna status 500
   }
 }
