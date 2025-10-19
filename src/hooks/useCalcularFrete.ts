@@ -13,7 +13,7 @@ interface Params {
 }
 
 async function fetchFrete({ cepDestino, quantidade }: Params): Promise<Frete[]> {
-    const res = await fetch("http://localhost:4000/calcular-frete", {
+    const res = await fetch("/api/calcular-frete", {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ cepDestino, quantidade })
