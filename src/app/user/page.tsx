@@ -1,10 +1,10 @@
 import React from 'react'
 import Login from './User'
 
-const page = () => {
+const Page = () => {
   return (
     <Login/>
   )
 }
 
-export default page
+export default Page
