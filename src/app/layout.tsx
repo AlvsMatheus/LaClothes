@@ -6,7 +6,6 @@ import NavBar from "./navbar/NavBar";
 
 import ReactQueryProvider from "@/hooks/ReactQueryProvider";
 
-
 const mainFontFamily = Inter({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-inter",
@@ -16,6 +15,7 @@ const mainFontFamily = Inter({
 export const metadata: Metadata = {
   title: "La Clothes",
   description: "Clothing store for the modern individual",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({
@@ -25,16 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <meta name="theme-color" content="#000000" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    
       <body className={`${mainFontFamily.variable}`}>
-      <ReactQueryProvider>
+        <ReactQueryProvider>
           <NavBar />
           {children}
           <Footer />
-      </ReactQueryProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );
